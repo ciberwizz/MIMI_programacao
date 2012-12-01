@@ -58,7 +58,7 @@ Não existem juniores permanentes.
 Custo de Senior permanente = Srp.
 Custo de Senior contratado = Src.
 Custo de Junior = Jr.
-Todos os contratos começam dia 1.
+Todos os contratos começam dia 1 do mes.  
 Juniores não fazem linhas de códigos nos primeiros Z dias.
 Produtividade normal é de N linhas de código.
 Trabalham 5 dias por semana.
