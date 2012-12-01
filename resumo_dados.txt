@@ -1,0 +1,82 @@
+                                                                     
+                                                                     
+                                                                     
+                                             
+Ficheiro de encomendas:
+a) Nº de linhas de código;
+b) Complexidade (simples ou complexo);
+c) Data de entrega intermédia;
+d) Data de entrega final.
+
+Projetos:
+Simples ou complexos.
+Pequenos, Médios ou Grandes.
+
+
+Preço:
+Linha de código simples = PUs
+Linha de código complexo = PUc
+
+Todos os Projetos:
+Tem de ter 1 Sénior no minimo Dmin (%) por mês do tempo do programador.
+
+Projeto Grande:
+Tem mais de Ng linhas de código.
+São sempre complexos.
+Grandes projetos tem de ter Sénior permanente.
+
+
+Projeto Médio:
+Tem mais de Nméd linhas de código.
+Tem sempre entrega intermédia.
+
+Projeto complexo:
+Tem de ter 1 programador Sénior a Dc (%) no minimo.
+
+
+Entrega intermédia:
+Tem de ter entre Imin e Imáx (em percentagem) do total de linha de código.
+
+Data Final:
+Pode ser excedida.
+Cada dia de atraso custa A (percentagem do preço total).
+Valor do atraso é descontado do pagamento final.
+Custo máximo do atraso tem de ser inferior a Amax (%) do que falta pagar.
+Atraso não pode superior a Adias dias.
+
+Pagamento:
+Efetuado no momento da entrega (intermédia ou final).
+Corresponde ao nº de linhas entregue.
+No pagamento final é descontado o valor do custo do atraso.
+
+Pessoal:
+Permanente ou temporário por periodos de 6 meses.
+Cada nova contratação custa C.
+Renovações não têm custo.
+Inicio tem P seniores permanentes.
+Não existem juniores permanentes.
+Custo de Senior permanente = Srp.
+Custo de Senior contratado = Src.
+Custo de Junior = Jr.
+Todos os contratos começam dia 1.
+Juniores não fazem linhas de códigos nos primeiros Z dias.
+Produtividade normal é de N linhas de código.
+Trabalham 5 dias por semana.
+A cada 6 meses tem 11 dias de férias pagas.
+
+
+Capitais:
+Capital inicial = E.
+Despesas mensais fixas = M.
+Despesas mensais pagas no ultimo dia do mês = Src + Srp + Jr + M
+
+
+
+
+
+Começamos com 0 projetos.
+Projetos começam no dia 1 de cada mês.
+Não somos obrigados a aceitar todos os projetos.
+Máximo de lucro (receitas - despesas) em cada ano.
+Projetos iniciados não podem ser abandonados.
+A empresa não pode dar prejuizo até ao fim do último projeto.
