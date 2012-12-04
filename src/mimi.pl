@@ -2,7 +2,7 @@
 %  
 %    trabalham 5 dias por semana
 %    tem ferias de 11 dias de 6 em 6 meses
-%    renovacao de contracto é gratis
+%    renovacao de contracto Ã© gratis
 % 
 %    globais
 %       PUs  -> preco de linha de codigo simples
@@ -45,8 +45,7 @@ alocate( ENC ) :-
 	Adias = 21,
 	M = 4000,
 	PUc = 25,
-	Z = 15.
-	
+	Z = 15,
 	
 	
 

@@ -7,11 +7,14 @@ go2 :-
         length(LS,Len),
         length(LD,Len),
         length(LR,Len),
-        LS = [1, 2, 3, 6, 7], % start times
+        length(LE,Len),
+        %LS = [1, 2, 3, 6, 7], % start times
         domain(LS,1,10),
-        LD = [3, 9,10, 6, 2],% duration times
+        %LD = [3, 9,10, 6, 2],% duration times
+        domain(LD, 1, 10),
         LR = [1, 2, 1, 1, 3],% resource used by tasks
-        % LE = [4,11,13,12, 9],
+        %LE = [4,11,13,12, 9],
+        domain(LE, 1, 13),
 
         Limit in 1..8, % we can't use more than 8 resources at the
                        % same time. In fact, we only use 7 in this
