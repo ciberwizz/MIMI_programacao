@@ -28,7 +28,7 @@ escalonar(DataTermino, SenioresDisponiveis, Projetos, DatasFim, DatasInicio, Dat
         length(SenioresAtribuidos, QtdProjetos),% Lista com a alocação de Séniores aos Projetos (Recurso limitado).
         length(LinhasDeCodigo, QtdProjetos),    % Linhas de código do projeto.
         length(DatasMeio, QtdProjetos),         % Lista com as datas intercalares dos projetos.
-
+        length(LinhasDiarias, QtdProjetos),     % Quantas linhas por dia um projeto precisa para ser terminado no prazo.
         
         % leitura dos dados dos projetos.
         (
@@ -52,6 +52,7 @@ escalonar(DataTermino, SenioresDisponiveis, Projetos, DatasFim, DatasInicio, Dat
         domain(DatasInicio, 1, DataTermino),
         domain(DatasFim, 1, DataTermino),
         domain(DuracaoProjetos, 1, DataTermino),
+        domain(LinhasDiarias, 1, 10000),
 
 
         % Obrigar a que a data final esteja depois da data de inicio.
@@ -63,10 +64,20 @@ escalonar(DataTermino, SenioresDisponiveis, Projetos, DatasFim, DatasInicio, Dat
         % Tentei colocar duas restrições, mas falhou. A data tentar abordagem com a data de contrato.
         ),
 
+        % Não ultrapassar a capacidade de produção mensal.
+        (
+           foreach(DP, DuracaoProjetos),
+           foreach(LC, LinhasDeCodigo),
+           foreach(LD, LinhasDiarias) do
+                LD #= (20 * LC) / (DP * 30)
+                
+         ),
+        
+        %sum(LinhasDiarias, #<=, CapacidadeDiaria),
         
         % Restrições ao problema.
         MaximoDeProjetos in 1..SenioresDisponiveis,
-      
+
         
         % Pretende-se terminar os projetos o mais cedo possível.
         maximum(Final, DatasFim), 
@@ -77,8 +88,10 @@ escalonar(DataTermino, SenioresDisponiveis, Projetos, DatasFim, DatasInicio, Dat
             foreach(DI, DatasInicio),
             foreach(DP, DuracaoProjetos),
             foreach(DF, DatasFim),
-            foreach(SA, SenioresAtribuidos),
-            foreach(task(DI, DP, DF, SA,0), ProjetosAEscalonar)
+            %foreach(SA, SenioresAtribuidos),
+            %foreach(task(DI, DP, DF, SA,0), ProjetosAEscalonar)
+            foreach(LD, LinhasDiarias),
+            foreach(task(DI, DP, DF, LD,0), ProjetosAEscalonar)
         do
             true
         ),
@@ -86,11 +99,13 @@ escalonar(DataTermino, SenioresDisponiveis, Projetos, DatasFim, DatasInicio, Dat
         append(DatasInicio, DatasFim, Vars1),
         append(Vars1,[MaximoDeProjetos], Vars),
         
-        
+                
         % obtenção de soluções
+        %cumulative(ProjetosAEscalonar, [limit(MaximoDeProjetos)]), % Processamento para obtenção do escalonamento de tarefas.
         cumulative(ProjetosAEscalonar, [limit(MaximoDeProjetos)]), % Processamento para obtenção do escalonamento de tarefas.
         labeling([minimize(Final)], Vars),      % Atribuição de valores concretos às variáveis (labeling).
-
+        labeling([ffc], LinhasDiarias),
+        
         
         % Apresentação de resultados.
         write('Datas de inicio dos projetos ': DatasInicio),nl,
@@ -98,6 +113,7 @@ escalonar(DataTermino, SenioresDisponiveis, Projetos, DatasFim, DatasInicio, Dat
         write('Datas de finalização dos projetos ': DatasFim),nl,
         write('Duração dos projetos': DuracaoProjetos),nl,
         write('Linhas de código dos projetos': LinhasDeCodigo), nl,
+        write('Alocações diárias': LinhasDiarias), nl,
         write('Utilização máximo de Séniores': SenioresAtribuidos),nl,
         write('Máximo de projetos simultâneos ': MaximoDeProjetos),nl,
         write('Último projeto termina em ': Final),nl,
