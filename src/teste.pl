@@ -57,7 +57,7 @@ go :-
         
         
         % cumulative(Lista_de_Inicios, Lista_de_Durações, Lista_de_Fins, Recurso_limite)
-        cumulative(Tasks, Seniores),
+        cumulatives(Tasks, Seniores),
         labeling([], Datas_Inicio),
         %labeling([], Data_Intercalares),
         labeling([], Datas_Finais),
