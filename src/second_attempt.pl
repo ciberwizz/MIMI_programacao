@@ -1,9 +1,9 @@
 :-use_module(library(clpfd)).
 :-use_module(library(lists)).
 
-% TODO: Aplicar restrições às datas media e final, com base no custo do atraso: 0 #<= (Linhas * Preço) - ((Data final - Data Contrato) * Custo diário de atraso).
-% TODO: Limitar linhas de código diário: Da duração de um projeto e do número de linhas obter linhas diárias, somar as linhas diárias dos projetos simultâneos e limitar com o nº de programadores nesse dia * qtde nominal de linhas. 
-% TODO: Realizar optimizações.
+% TODO: Aplicar restriÃ§Ãµes Ã s datas media e final, com base no custo do atraso: 0 #<= (Linhas * PreÃ§o) - ((Data final - Data Contrato) * Custo diÃ¡rio de atraso).
+% TODO: Limitar linhas de cÃ³digo diÃ¡rio: Da duraÃ§Ã£o de um projeto e do nÃºmero de linhas obter linhas diÃ¡rias, somar as linhas diÃ¡rias dos projetos simultÃ¢neos e limitar com o nÂº de programadores nesse dia * qtde nominal de linhas. 
+% TODO: Realizar optimizaÃ§Ãµes.
 % TODO: Fazer o alocate para excluir as encomendas que podem fazer falhar o escalonar.
 % TODO: Fazer calculo dos rendimentos.
 % TODO: Fazer a contabilidade: Do Saldo retirar gastos mensais e adicionar rendimentos.
@@ -17,16 +17,16 @@
 escalonar(DataTermino, SenioresDisponiveis, CapacidadeDiaria, Projetos, DatasFim, DatasInicio, DatasMeio, DuracaoProjetos) :-
 %escalonar(DataTermino, SenioresDisponiveis, Projetos, DatasFim, DatasInicio, DatasMeio, DuracaoProjetos) :-
 % DataTermino = Data limite para terminar todos os projetos.
-% SenioresDisponiveis = Quantidade de Séniores disponíveis a cada momento (se for utilizada percentagem, sendo que 1 Senior = 100, é possível atribuir tempo parcial de Senior a projetos).
+% SenioresDisponiveis = Quantidade de SÃ©niores disponÃ­veis a cada momento (se for utilizada percentagem, sendo que 1 Senior = 100, Ã© possÃ­vel atribuir tempo parcial de Senior a projetos).
 % Projetos = Lista com os projetos aceites.
         
-        % Criação das listas com os vários parâmetros.
-        length(Projetos, QtdProjetos),          % Verificar quantos projetos são para escalonar.
+        % CriaÃ§Ã£o das listas com os vÃ¡rios parÃ¢metros.
+        length(Projetos, QtdProjetos),          % Verificar quantos projetos sÃ£o para escalonar.
         length(DatasInicio, QtdProjetos),       % Lista com as datas de inicio dos projetos.
         length(DatasFim, QtdProjetos),          % Lista com as datas de fim dos projetos.
-        length(DuracaoProjetos, QtdProjetos),   % Lista com a duração dos projetos.
-        length(SenioresAtribuidos, QtdProjetos),% Lista com a alocação de Séniores aos Projetos (Recurso limitado).
-        length(LinhasDeCodigo, QtdProjetos),    % Linhas de código do projeto.
+        length(DuracaoProjetos, QtdProjetos),   % Lista com a duraÃ§Ã£o dos projetos.
+        length(SenioresAtribuidos, QtdProjetos),% Lista com a alocaÃ§Ã£o de SÃ©niores aos Projetos (Recurso limitado).
+        length(LinhasDeCodigo, QtdProjetos),    % Linhas de cÃ³digo do projeto.
         length(DatasMeio, QtdProjetos),         % Lista com as datas intercalares dos projetos.
         length(LinhasDiarias, QtdProjetos),     % Quantas linhas por dia um projeto precisa para ser terminado no prazo.
         
@@ -40,15 +40,15 @@ escalonar(DataTermino, SenioresDisponiveis, CapacidadeDiaria, Projetos, DatasFim
                 true
         ),
         % Debug do carregamento de dados.
-%        nl,write('Data limite para conclusão dos projetos': DataTermino), nl,
-%        write('Seniores disponíveis': SenioresDisponiveis), nl,
-%        write('Linhas de código dos projetos': LinhasDeCodigo), nl,
-%        write('Utilização máximo de Séniores': SenioresAtribuidos),nl,
+%        nl,write('Data limite para conclusÃ£o dos projetos': DataTermino), nl,
+%        write('Seniores disponÃ­veis': SenioresDisponiveis), nl,
+%        write('Linhas de cÃ³digo dos projetos': LinhasDeCodigo), nl,
+%        write('UtilizaÃ§Ã£o mÃ¡ximo de SÃ©niores': SenioresAtribuidos),nl,
 %        write('Datas de entrega intercalar dos projetos ': DatasMeio),nl,
-%        write('Datas de finalização dos projetos ': DatasFim),nl,nl,
+%        write('Datas de finalizaÃ§Ã£o dos projetos ': DatasFim),nl,nl,
         
         
-        % Definição das variáveis de dominio do problema.        
+        % DefiniÃ§Ã£o das variÃ¡veis de dominio do problema.        
         domain(DatasInicio, 1, DataTermino),
         domain(DatasFim, 1, DataTermino),
         domain(DuracaoProjetos, 1, DataTermino),
@@ -61,10 +61,10 @@ escalonar(DataTermino, SenioresDisponiveis, CapacidadeDiaria, Projetos, DatasFim
           foreach(DP, DuracaoProjetos),
           foreach(DF, DatasFim) do
                 DF #>= DI + DP
-        % Tentei colocar duas restrições, mas falhou. A data tentar abordagem com a data de contrato.
+        % Tentei colocar duas restriÃ§Ãµes, mas falhou. A data tentar abordagem com a data de contrato.
         ),
 
-        % Não ultrapassar a capacidade de produção mensal.
+        % NÃ£o ultrapassar a capacidade de produÃ§Ã£o mensal.
         (
            foreach(DP, DuracaoProjetos),
            foreach(LC, LinhasDeCodigo),
@@ -75,15 +75,15 @@ escalonar(DataTermino, SenioresDisponiveis, CapacidadeDiaria, Projetos, DatasFim
         
         %sum(LinhasDiarias, #<=, CapacidadeDiaria),
         
-        % Restrições ao problema.
+        % RestriÃ§Ãµes ao problema.
         MaximoDeProjetos in 1..SenioresDisponiveis,
 
         
-        % Pretende-se terminar os projetos o mais cedo possível.
+        % Pretende-se terminar os projetos o mais cedo possÃ­vel.
         maximum(Final, DatasFim), 
 
         
-        % Criação das tarefas que vão ser utilizadas como parâmetros do cumulative/2.
+        % CriaÃ§Ã£o das tarefas que vÃ£o ser utilizadas como parÃ¢metros do cumulative/2.
         (
             foreach(DI, DatasInicio),
             foreach(DP, DuracaoProjetos),
@@ -94,26 +94,25 @@ escalonar(DataTermino, SenioresDisponiveis, CapacidadeDiaria, Projetos, DatasFim
         do
             true
         ),
-        % Preparação do labeling.
+        % PreparaÃ§Ã£o do labeling.
         append(DatasInicio, DatasFim, Vars1),
         append(Vars1,[MaximoDeProjetos], Vars),
         
                 
-        % obtenção de soluções
-        %cumulative(ProjetosAEscalonar, [limit(MaximoDeProjetos)]), % Processamento para obtenção do escalonamento de tarefas.
-        cumulative(ProjetosAEscalonar, [limit(MaximoDeProjetos)]), % Processamento para obtenção do escalonamento de tarefas.
-        labeling([minimize(Final)], Vars),      % Atribuição de valores concretos às variáveis (labeling).
+        % obtenÃ§Ã£o de soluÃ§Ãµes
+        cumulative(ProjetosAEscalonar, [limit(MaximoDeProjetos)]), % Processamento para obtenÃ§Ã£o do escalonamento de tarefas.
+        labeling([minimize(Final)], Vars),      % AtribuiÃ§Ã£o de valores concretos Ã s variÃ¡veis (labeling).
         labeling([ffc], LinhasDiarias),
 
         
-        % Apresentação de resultados.
+        % ApresentaÃ§Ã£o de resultados.
         write('Datas de inicio dos projetos ': DatasInicio),nl,
         write('Datas de entrega intercalar dos projetos ': DatasMeio),nl,
-        write('Datas de finalização dos projetos ': DatasFim),nl,
-        write('Duração dos projetos': DuracaoProjetos),nl,
-        write('Linhas de código dos projetos': LinhasDeCodigo), nl,
-        write('Alocações diárias': LinhasDiarias), nl,
-        write('Utilização máximo de Séniores': SenioresAtribuidos),nl,
-        write('Máximo de projetos simultâneos ': MaximoDeProjetos),nl,
-        write('Último projeto termina em ': Final),nl,
+        write('Datas de finalizaÃ§Ã£o dos projetos ': DatasFim),nl,
+        write('DuraÃ§Ã£o dos projetos': DuracaoProjetos),nl,
+        write('Linhas de cÃ³digo dos projetos': LinhasDeCodigo), nl,
+        write('AlocaÃ§Ãµes diÃ¡rias': LinhasDiarias), nl,
+        write('UtilizaÃ§Ã£o mÃ¡ximo de SÃ©niores': SenioresAtribuidos),nl,
+        write('MÃ¡ximo de projetos simultÃ¢neos ': MaximoDeProjetos),nl,
+%        write('Ãšltimo projeto termina em ': Final),nl,
         fd_statistics.
