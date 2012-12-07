@@ -1,7 +1,7 @@
 % Ficheiro de encomendas:
-% Linhas_Codigo = Nº de linhas de código (1 - n);
+% Linhas_Codigo = NÂº de linhas de cÃ³digo (1 - n);
 % Complexidade = Complexidade, 0 = simples ou 1 = complexo);
-% DataIntermedia = Data de entrega intermédia;
+% DataIntermedia = Data de entrega intermÃ©dia;
 % DataFinal = Data de entrega final.
 % [Linhas_Codigo, Complexidade, DataIntermedia, DataFinal]
 % 35 -> 1
@@ -10,10 +10,10 @@
 % 1000 -> 29
 % 5000 -> 143
 
-% 4 x 35 = 140 x 30 = 4200 Linhas código/mês com pessoal inicial. 
+% 4 x 35 = 140 x 30 = 4200 Linhas cÃ³digo/mÃªs com pessoal inicial. 
 
 Encomendas = [
-              [1000, 1, 80, 100], [5000, 1, 170, 200], [500, 1, 145, 150], [3000, 1, 340, 360], [1000, 1, 280, 300], 
+              [100000, 1, 80, 100], [50000, 0, 170, 200], [5000, 0, 145, 150], [3000, 1, 340, 360], [1000, 1, 280, 300], 
               [4000, 1, 140, 200], [1500, 1, 186, 212], [2900, 1, 135, 150], [5400, 1, 300, 360], [2100, 1, 290, 300],
               [3000, 1, 230, 270], [2300, 1, 150, 200], [1300, 1, 135, 150], [2700, 1, 300, 360], [7200, 1, 220, 300],
               [2500, 1, 320, 360], [1700, 1, 170, 200], [3800, 1, 135, 150], [1600, 1, 330, 360], [2900, 1, 270, 300],
