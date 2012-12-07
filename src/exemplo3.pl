@@ -1,3 +1,6 @@
-ifthen(A, B) :-
-        C = 4,
-        A =:= 1 -> B = C; B = 2.
+:- use_module(library(clpfd)).
+:- use_module(library(lists)).
+
+sl :-
+        
+        sublist
