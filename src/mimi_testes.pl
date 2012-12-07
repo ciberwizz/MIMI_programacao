@@ -49,6 +49,10 @@ aceitar_enc(Enc, Projectos, VARS) :-
       
 
 
+
+
+
+
 %hardcoded globals, just to test ideas
 %ENC = [[+Nlinhas,+NSeniors, +Data_It, +Data_F_proj, Aceite],..]
 
@@ -136,5 +140,44 @@ alocate( ENC, Lucro, VARS ) :-
       write('Projectos ':Projectos),nl,
       write('Orcamento ':Orcamento),nl,
       write('OrcT ': OrcT), nl.
+
+
+
+%ex orc_test( [[10000,1,0,12,1],[10000,1,0,12,1]], Lucro, VARS ).
+orc_test( ENC, Lucro, VARS ) :-
+	E = 200*1000, % capital inicial	
+	C = 500, % custo de novo contracto
+	Srp = 4000, % ordenado senior
+	Jr = 1000, % ordenado Jr
+	A = 1,  % percentagem a decontar no lucro por dia de atraso
+	Amax = 20, % percentagem max de desconto
+	Adias = 21, % dias max de atraso
+        N =  35, % producao de linhas de codigo num dia por programador 
+	M = 1000, % despesas mensais
+	PUc = 25, % preco por linha de codigo num projecto complexo
+	Z = 15, % dias apos contratacao em que n produz
+        F = 11, % ferias por cada 6 meses
+	
+
+
+        % despesas mensais durante um ano
+        Desp_Fixas_ano is 12*M, 
+        Cap_projectos is E - Desp_Fixas_ano,write("______":Cap_projectos),nl,
+
+        % os orcamentos podem ir de 1e ate ao capital
+        % mas a soma dos orcamentos dos projectos nao ultrapassa o capital inicial
+        (
+            foreach([Nlinhas, Nseniors, Data_it, Data_F, Aceite], ENC),
+            foreach( OT , OrcT),
+            foreach( O , Orcamento)
+            do
+               OT in 1..Cap_projectos,
+               O #= OT*Aceite
+        ),sum(Orcamento, #=< , Cap_projectos),
+        append(Orcamento,OrcT, VARS),
+        labeling([],VARS),
+        write('\n\nOrcamento: ':Orcamento),nl.
+
+
 
 
