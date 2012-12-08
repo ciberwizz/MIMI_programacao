@@ -40,12 +40,12 @@ mimi :-
               [100000, 1, 80, 100], [150000, 0, 170, 200], [50000, 0, 145, 150], [3000, 1, 340, 360], [1000, 1, 280, 300], 
               [4000, 1, 140, 200], [1500, 1, 186, 212], [2900, 1, 135, 150], [5400, 1, 300, 360], [2100, 1, 290, 300],
               [3000, 1, 230, 270], [2300, 0, 150, 200], [1300, 1, 135, 150], [2700, 1, 300, 360], [7200, 1, 220, 300],
-%              [2500, 1, 320, 360], [1700, 1, 170, 200], [3800, 1, 135, 150], [1600, 1, 330, 360], [2900, 1, 270, 300],
+              [2500, 1, 320, 360], [1700, 1, 170, 200], [3800, 1, 135, 150], %[1600, 1, 330, 360], %[2900, 1, 270, 300],
 %              [1500, 0, 260, 280], [600, 1, 190, 200], [5300, 1, 135, 150], [3100, 1, 300, 360], [300, 1, 250, 300],
 %              [3500, 1, 230, 270], [4500, 1, 140, 200], [6300, 0, 135, 150], [4300, 1, 300, 360], [100, 1, 220, 300],
 %              [350, 1, 10, 30], [450, 1, 14, 20], [600, 1, 23, 30], [1400, 1, 20, 30], [1000, 1, 22, 30],
 %              [550, 1, 20, 25], [850, 1, 15, 18], [900, 1, 13, 22], [1800, 1, 10, 20], [2000, 1, 22, 30],
-%              [950, 1, 40, 60], [1450, 1, 40, 60], [1600, 1, 23, 35], [1500, 1, 20, 40], [1000, 1, 22, 34],
+              [950, 1, 40, 60], [1450, 1, 40, 60], [1600, 1, 23, 35], [1500, 1, 20, 40], [1000, 1, 22, 34],
               [1550, 1, 45, 55], [1850, 1, 35, 47], [1900, 1, 43, 52], [2400, 1, 35, 53], [500, 1, 22, 34],              
               [100, 1, 3, 7]
               ],
@@ -59,7 +59,6 @@ mimi :-
         length(Complexidade, QtdEncomendas),            % Lista com a complexidade de acordo com a encomenda.
         length(LinhasDeCodigo, QtdEncomendas),          % Linhas de código do projeto.
         length(DatasMeioContratadas, QtdEncomendas),    % Lista com as datas intercalares dos projetos.
-        length(RentabilidadeMaximaEncomendas, QtdEncomendas),    % Lista com os valores máximos de cada projeto.
         
         
         % Ler as encomendas.
@@ -70,12 +69,11 @@ mimi :-
           foreach(DM, DatasMeioContratadas),
           foreach(DF, DatasFinaisContratadas),
           foreach(SA, SenioresAAtribuir),
-          foreach([LC, SA, DM, DF], ProjetosAceites),     % Criar a lista de tarefas.
-          foreach(RME, RentabilidadeMaximaEncomendas) do
+          foreach([LC, SA, DM, DF], ProjetosAceites) do     % Criar a lista de tarefas.
                 (LC >= LimiteProjetoComplexo -> CP1 = 1; CP1 = CP),     % Garante que o requisito de projetos acima de certa dimensão é sempre complexo.
                 (LC >= LimiteProjetoComplexo -> SA = 100;       % Atribuir Seniores de acordo com complexidade e número de linhas de código. 
-                 CP =:= 1 -> SA = Senior_ProjetoComplexo; SA = Senior_Minimo),
-                (CP =:= 1 -> RME is LC * ValorLinha_Complexo; RME is LC * ValorLinha_Simples)   % Calcular a rentabilidade máxima de cada encomenda.
+%                 CP =:= 1 -> SA = Senior_ProjetoComplexo; SA = Senior_Minimo),
+                 CP =:= 1 -> SA = 100; SA = 100)
         ),
 %        write('Seniores a atribuir a cada projeto': SenioresAAtribuir), nl,
 %        write('Rentabilidade Máxima das Encomendas': RentabilidadeMaximaEncomendas), nl,
@@ -118,14 +116,12 @@ escalonar(DataTermino, SenioresDisponiveis, Projetos, DatasFim, DatasInicio, Dat
         length(SenioresAtribuidos, QtdProjetos),% Lista com a alocação de Séniores aos Projetos (Recurso limitado).
         length(LinhasDeCodigo, QtdProjetos),    % Linhas de código do projeto.
         length(DatasMeio, QtdProjetos),         % Lista com as datas intercalares dos projetos.
-        length(LinhasDiarias, QtdProjetos),     % Quantas linhas por dia um projeto precisa para ser terminado no prazo.
         length(Aceitacoes, QtdProjetos),
         
         % Definição das variáveis de dominio do problema.        
         domain(DatasInicio, 1, DataTermino),
         domain(DatasFim, 1, DataTermino),
         domain(DuracaoProjetos, 1, DataTermino),
-        domain(LinhasDiarias, 1, 10000),
         domain(Aceitacoes, 0, 1),
         
         
@@ -141,27 +137,31 @@ escalonar(DataTermino, SenioresDisponiveis, Projetos, DatasFim, DatasInicio, Dat
           foreach(AC, Aceitacoes),
           foreach(SA, SenioresAtribuidos),
           foreach(task(DI, DP, DF, Res, 0), ProjetosAEscalonar) do
-                DF #>= DI + DP,
+                DP #= DF - DI,
                 Res #= SA * AC
         ),
 
         
         % Restrições ao problema.
-        maximum(Final, DatasFim), 
+%        maximum(Final, DatasFim), 
         
         MaximoDeProjetos in 1..SenioresDisponiveis,
-        sum(Aceitacoes, #>=, 2),
+        sum(Aceitacoes, #>=, 5),
         count(1, Aceitacoes, #=, Aceites),
+        minimum(Inicio, DatasInicio),
+        
         
         % Preparação do labeling.
         append(DatasInicio, DatasFim, Vars1),
         append(Vars1, [MaximoDeProjetos], Vars),
+        
                 
         % obtenção de soluções
         cumulative(ProjetosAEscalonar, [limit(MaximoDeProjetos)]), % Processamento para obtenção do escalonamento de tarefas.
         
-        labeling([up, maximize(Aceites)], Aceitacoes),
-        labeling([minimize(Final)], Vars),      % Atribuição de valores concretos Ã s variáveis (labeling).    
+        labeling([down], Aceitacoes),
+        labeling([up], DuracaoProjetos),
+        labeling([], Vars),      % Atribuição de valores concretos Ã s variáveis (labeling).    
         
         
         % Apresentação de resultados.
@@ -171,10 +171,10 @@ escalonar(DataTermino, SenioresDisponiveis, Projetos, DatasFim, DatasInicio, Dat
         write('Duração dos projetos': DuracaoProjetos),nl,
         write('Aceitações': Aceitacoes), nl,
         write('Linhas de código dos projetos': LinhasDeCodigo), nl,
-        write('Alocações diárias': LinhasDiarias), nl,
         write('Utilização máximo de Séniores': SenioresAtribuidos),nl,
         write('Máximo de projetos simultâneos ': MaximoDeProjetos),nl,
         write('Recursos utilizados': SenioresAtribuidos), nl,
         write('Projetos escalonados': ProjetosAEscalonar), nl,
         write('Projetos aceites': Aceites), nl,
+        write('Inicio': Inicio), nl,
         fd_statistics.
