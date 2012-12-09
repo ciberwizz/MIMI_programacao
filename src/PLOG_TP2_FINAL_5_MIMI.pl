@@ -137,7 +137,7 @@ escalonar(DataTermino, SenioresDisponiveis, Projetos, DatasFim, DatasInicio, Dat
           foreach(AC, Aceitacoes),
           foreach(SA, SenioresAtribuidos),
           foreach(task(DI, DP, DF, Res, 0), ProjetosAEscalonar) do
-                DP #= DF - DI,
+                DF #= DI + DP,
                 Res #= SA * AC
         ),
 
