@@ -48,7 +48,7 @@ mimi :-
         ValorLinha_Complexo is 35,       % Preço das linhas de projetos complexos (PUc).
         ValorLinha_Simples is 25,        % Preço das linhas de projetos simples (PUs).
         
-        Seniores_Permanentes is 1,       % Número de Seniores iniciais (P).
+        Seniores_Permanentes is 4,       % Número de Seniores iniciais (P).
         CustoContrato is 500,            % Custo de novo contrato (C).
         OrdenadoJunior is 1000,          % Remuneração mensal de junior (Jr).
         OrdenadoSeniorPerm is 4000,      % Remunerção mensal de Senior permanente (Srp).
@@ -89,20 +89,18 @@ mimi :-
 
 
         % Lista de encomendas para testes.
-        Encomendas = [
-              [100000, 1, 80, 100], [150000, 0, 170, 200], [50000, 0, 145, 150], [3000, 1, 340, 360], [1000, 1, 280, 300], 
-              [4000, 1, 140, 200]/*, [1500, 1, 186, 212], [2900, 1, 135, 150], [5400, 1, 300, 360], [2100, 1, 290, 300],
-              [3000, 1, 230, 270], [2300, 0, 150, 200], [1300, 1, 135, 150], [2700, 1, 300, 360], [7200, 1, 220, 300],
-              [2500, 1, 320, 360], [1700, 1, 170, 200], [3800, 1, 135, 150], %[1600, 1, 330, 360], %[2900, 1, 270, 300],
-%              [1500, 0, 260, 280], [600, 1, 190, 200], [5300, 1, 135, 150], [3100, 1, 300, 360], [300, 1, 250, 300],
-%              [3500, 1, 230, 270], [4500, 1, 140, 200], [6300, 0, 135, 150], [4300, 1, 300, 360], [100, 1, 220, 300],
-%              [350, 1, 10, 30], [450, 1, 14, 20], [600, 1, 23, 30], [1400, 1, 20, 30], [1000, 1, 22, 30],
-%              [550, 1, 20, 25], [850, 1, 15, 18], [900, 1, 13, 22], [1800, 1, 10, 20], [2000, 1, 22, 30],
-              [950, 1, 40, 60], [1450, 1, 40, 60], [1600, 1, 23, 35], [1500, 1, 20, 40], [1000, 1, 22, 34],
-              [1550, 1, 45, 55], [1850, 1, 35, 47], [1900, 1, 43, 52], [2400, 1, 35, 53], [500, 1, 22, 34],              
-              [100, 1, 3, 7]
-  */            ],
-        
+           % [ [Nlinhas, Complex, Data_Intermedia, Data_Final],..]
+ 
+       Encomendas = [
+              [10000, 1, 3, 12 ], 
+              [1550,   1, 1, 2 ], 
+%              [1850,   1, 4, 5], 
+%              [1900,   1, 1, 3 ], 
+              [2400,   1, 2, 4 ], 
+%              [500,    1, 6, 7 ],              
+              [100,    1, 3, 7 ]
+        ],
+
         % Criação das listas com os vários parâmetros de trabalho.
         length(Encomendas, QtdEncomendas),              % Verificar quantos projetos são para escalonar.
 %        length(DatasInicio, QtdEncomendas),            % Lista com as datas de inicio dos projetos.
@@ -137,26 +135,54 @@ mimi :-
         
         % Seniores disponiveis.
         Seniores #= Seniores_Permanentes * 100,
-        escalonar(1000, Seniores, ProjetosAceites, DatasFim, DatasInicio, DatasMeio, DuracaoProjetos),
-%        escalonar(1000, Seniores, [[350, 40, 10, 20], [450, 20, 14, 20], [600, 80, 23, 40], [1400, 100, 20, 30], [1000, 80, 122, 160]], DatasFim, DatasInicio, DatasMeio, DuracaoProjetos),        
-        
-%        write('Datas de entrega': DatasFim), nl,
-%        write('Datas de inicio': DatasInicio), nl,
-%        write('Datas intecalares': DatasMeio), nl,
-%        write('Duração dos projetos': DuracaoProjetos), nl,
-        
-        
-       
+        escalonar(1000, Seniores, ProjetosAceites, DatasFim, DatasInicio, DatasMeio,  [ 
+                  ProjetosAEscalonar, 
+                  MaximoDeProjetos, 
+                  Aceitacoes, 
+                  DuracaoProjetos, 
+                  Escal_Vars 
+             ]),
+append(Aceitacoes, DuracaoProjetos, VV1),
+append(VV1, Escal_Vars,VV2),      
 
-
-
+ 
+        write('     to Cumulative'),nl,
+        % obtenção de soluções
+%        cumulative(ProjetosAEscalonar, [limit(MaximoDeProjetos)]), % Processamento para obtenção do escalonamento de tarefas.
+/*        write('      to aceitacoes'),nl,
+        labeling([down], Aceitacoes),
+        write('      to Duracao     '),nl,
+        labeling([up], DuracaoProjetos),
+        write('      to Escal_Vars      '),nl,
+        labeling([], Escal_Vars),      % Atribuição de valores concretos Ã s variáveis (labeling).    
+  */
+        
+      
+        date_to_duration(ProjetosAceites, DatasInicio, Complexidade, ENC_aloc),  
+   %    write('\n\nENC para alocacoes: [ NLinhas, NSr, Dur_m, Dur_f, C]\n'),
+   %    write('ENC ':ENC_aloc),nl,nl
 
 %ENC = [[+Nlinhas,+NSeniors, +Data_It, +Data_F_proj, +Complexidade],..]
 
-        ENC = [[10000,50,0,12,1],[8000,50,0,12,1]],
-        Aceites = [1,1],
+%        ENC = [[10000,50,0,12,1],[8000,50,0,12,1]],
+ %       Aceites = [1,1].
 
-        alocate(GLOBAIS,ENC,Aceites,Lucro,VARS).
+%        alocate(GLOBAIS,ENC_aloc,Aceitacoes,Lucro,VARS),
+append(VV2,[],VVV),
+
+cumulative(ProjetosAEscalonar, [limit(MaximoDeProjetos)]),
+labeling([],VVV),
+
+
+%        write('      to alocate       '),nl,
+%        labeling([],VARS),
+ 
+        write('Datas de entrega': DatasFim), nl,
+        write('Datas de inicio': DatasInicio), nl,
+        write('Datas intecalares': DatasMeio), nl,
+        write('Duração dos projetos': DuracaoProjetos), nl,
+        write('ALocation vars ':VARS),nl.
+
 
 
 % consult('mimi.pl'). mimi.
@@ -172,7 +198,7 @@ mimi :-
 % TODO alterar o preco das linhas de complexo  ou simples.
 
 % consult('mimi_testes.pl'). alocate( [[10000,100,0,12,1],[8000,1,0,12,1]],[1,1], Lucro, VARS ).
-alocate( Globals, ENC, Enc_aceites, Lucro, VARS ) :- write(Globals),nl,
+alocate( Globals, ENC, Enc_aceites, Lucro, VARS ) :- 
 	nth1(19,Globals,E) ,    % capital inicial	
 	nth1(13,Globals,C),     % custo de novo contracto
 	nth1(15,Globals,Srp),   % ordenado senior permanente
@@ -194,7 +220,7 @@ alocate( Globals, ENC, Enc_aceites, Lucro, VARS ) :- write(Globals),nl,
         % inclui-se aqqui pos os Nseniors nas enc estao em percentagem
         Desp_Fixas_ano is 12*(M + NSr*Srp), 
         Cap_projectos is E - Desp_Fixas_ano,
-write('Cap_projectos ':Cap_projectos),nl,
+
         % os orcamentos podem ir de 1e ate ao capital
         % mas a soma dos orcamentos dos projectos nao ultrapassa o capital inicial
         (
@@ -207,8 +233,7 @@ write('Cap_projectos ':Cap_projectos),nl,
         ),
         sum(Orcamento, #=< , Cap_projectos),
 
-
-
+\
         (
             foreach( Orc, Orcamento),
             foreach( [Nlinhas, Nseniors, Data_it, Data_F, Complex], ENC),
@@ -251,9 +276,8 @@ write('Cap_projectos ':Cap_projectos),nl,
       append(Projectos, FProjectos),
       append( FContractos, FProjectos, VARS3),
       append( OrcT, Orcamento, VARS1),
-      append(VARS1,VARS3,VARS),
-
-write(VARS),nl,
+      append(VARS1,VARS3,VARS).
+/*
       labeling([], VARS),
 
       write('\n\n\nDADOS\n'),
@@ -262,7 +286,7 @@ write(VARS),nl,
       write('Projectos ':Projectos),nl,
       write('Orcamento ':Orcamento),nl,
       write('OrcT ': OrcT), nl.
-
+*/
 
 
 
@@ -287,14 +311,21 @@ date_to_duration(Proj, Data_I, Complexidade, ENC_aloc) :-
 
 
 
-
 % Escalonamento (scheduling) dos projetos.
 % DataTermino = Data limite para terminar todos os projetos.
 % SenioresDisponiveis = Quantidade de Séniores disponíveis a cada momento (se for utilizada percentagem, sendo que 1 Senior = 100, é possÃ­vel atribuir tempo parcial de Senior a projetos).
 % Projetos = Lista com os projetos aceites.
-% escalonar(1000, 4, [[350, 1, 10, 30], [450, 1, 14, 20], [600, 1, 23, 40], [1400, 1, 20, 30], [1000, 1, 22, 60]], DatasFim, DatasInicio, DatasMeio, DuracaoProjetos).
-% escalonar(1000, 400, [[350, 40, 10, 30], [450, 20, 14, 20], [600, 80, 23, 40], [1400, 100, 20, 30], [1000, 80, 22, 60]], DatasFim, DatasInicio, DatasMeio, DuracaoProjetos).
-escalonar(DataTermino, SenioresDisponiveis, Projetos, DatasFim, DatasInicio, DatasMeio, DuracaoProjetos) :-
+    %projectos = [ [NLinhas, Senior_atr, Data_M, Data_F],.. ]
+
+%        OUT_VARS = [ 
+%             ProjetosAEscalonar, 
+%             MaximoDeProjetos, 
+%             Aceitacoes, 
+%             DuracaoProjetos, 
+%             Vars 
+%        ], 
+
+escalonar(DataTermino, SenioresDisponiveis, Projetos, DatasFim, DatasInicio, DatasMeio,OUT_VARS) :-
 
         % Criação das listas com os vários parâmetros.
         length(Projetos, QtdProjetos),          % Verificar quantos projetos são para escalonar.
@@ -334,7 +365,7 @@ escalonar(DataTermino, SenioresDisponiveis, Projetos, DatasFim, DatasInicio, Dat
 %        maximum(Final, DatasFim), 
         
         MaximoDeProjetos in 1..SenioresDisponiveis,
-        sum(Aceitacoes, #>=, 5),
+        sum(Aceitacoes, #>=, 1),
         count(1, Aceitacoes, #=, Aceites),
         minimum(Inicio, DatasInicio),
         
@@ -344,13 +375,20 @@ escalonar(DataTermino, SenioresDisponiveis, Projetos, DatasFim, DatasInicio, Dat
         
                 
         % obtenção de soluções
-        cumulative(ProjetosAEscalonar, [limit(MaximoDeProjetos)]), % Processamento para obtenção do escalonamento de tarefas.
+%        cumulative(ProjetosAEscalonar, [limit(MaximoDeProjetos)]), % Processamento para obtenção do escalonamento de tarefas.
         
-        labeling([down], Aceitacoes),
-        labeling([up], DuracaoProjetos),
-        labeling([], Vars),      % Atribuição de valores concretos Ã s variáveis (labeling).    
+ %       labeling([down], Aceitacoes),
+  %      labeling([up], DuracaoProjetos),
+%        labeling([], Vars),      % Atribuição de valores concretos Ã s variáveis (labeling).  
+        OUT_VARS = [ 
+             ProjetosAEscalonar, 
+             MaximoDeProjetos, 
+             Aceitacoes, 
+             DuracaoProjetos, 
+             Vars 
+        ]. 
         
-        
+/*        
         % Apresentação de resultados.
         write('Datas de inicio dos projetos ': DatasInicio),nl,
         write('Datas de entrega intercalar dos projetos ': DatasMeio),nl,
@@ -365,7 +403,7 @@ escalonar(DataTermino, SenioresDisponiveis, Projetos, DatasFim, DatasInicio, Dat
         write('Projetos aceites': Aceites), nl,
         write('Inicio': Inicio), nl,
         fd_statistics.
-
+*/
 
 
 
