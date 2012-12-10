@@ -1,31 +1,3 @@
-% variable structure
-%  
-%    trabalham 5 dias por semana
-%    tem ferias de 11 dias de 6 em 6 meses
-%    renovacao de contracto Ã© gratis
-% 
-%    globais
-%       PUs  -> preco de linha de codigo simples
-%       PUc  -> preco de linha de codigo complexo
-%       C    -> custo de contratacao
-%       Srp  -> ordenado senior permanente 
-%       Src  -> ordenado senior contractado
-%       Jr   -> ordenado junior
-%       Z    -> dias que sendo contractado faz 0
-%       N    -> N linhas de codigo por dia por programador
-%       P    -> numero de programadores senior permanente
-%       E    -> capital inicial
-%       M    -> despesas mensais fixas
-%       A    -> percentagem a descontar no valor do proj 
-%		por cada dia de atraso
-%       Amax -> percentagem maxima de A*dias de atraso
-%       Adias-> maximo de dias de atraso
-%
-% 
-% Encomendas = { [NLinhas,Complexidade, Data_Intermedia, DataFinal],..}
-%
-%
-%
 
 :- use_module(library(clpfd)).
 :- use_module(library(lists)).
@@ -93,11 +65,8 @@ mimi :-
  
        Encomendas = [
               [10000, 1, 3, 12 ], 
-              [1550,   1, 1, 2 ], 
-%              [1850,   1, 4, 5], 
-%              [1900,   1, 1, 3 ], 
-              [2400,   1, 2, 4 ], 
-%              [500,    1, 6, 7 ],              
+              [1550,   1, 1, 2 ],  
+              [2400,   1, 2, 4 ],           
               [100,    1, 3, 7 ]
         ],
 
@@ -105,7 +74,6 @@ mimi :-
         length(Encomendas, QtdEncomendas),              % Verificar quantos projetos são para escalonar.
 %        length(DatasInicio, QtdEncomendas),            % Lista com as datas de inicio dos projetos.
         length(DatasFinaisContratadas, QtdEncomendas),  % Lista com as datas de fim dos projetos.
-%        length(DuracaoProjetos, QtdEncomendas),        % Lista com a duração dos projetos.
         length(SenioresAAtribuir, QtdEncomendas),       % Lista com a alocação de Séniores aos Projetos (Recurso limitado).
         length(Complexidade, QtdEncomendas),            % Lista com a complexidade de acordo com a encomenda.
         length(LinhasDeCodigo, QtdEncomendas),          % Linhas de código do projeto.
@@ -123,18 +91,15 @@ mimi :-
           foreach([LC, SA, DM, DF], ProjetosAceites) do     % Criar a lista de tarefas.
                 (LC >= LimiteProjetoComplexo -> CP1 = 1; CP1 = CP),     % Garante que o requisito de projetos acima de certa dimensão é sempre complexo.
                 (LC >= LimiteProjetoComplexo -> SA = 100;       % Atribuir Seniores de acordo com complexidade e número de linhas de código. 
-%                 CP =:= 1 -> SA = Senior_ProjetoComplexo; SA = Senior_Minimo),
                  CP =:= 1 -> SA = 100; SA = 100)
         ),
-%        write('Seniores a atribuir a cada projeto': SenioresAAtribuir), nl,
-%        write('Rentabilidade Máxima das Encomendas': RentabilidadeMaximaEncomendas), nl,
         
-
-        % Restrições a aplicar de acordo com os requisitos:
 
         
         % Seniores disponiveis.
         Seniores #= Seniores_Permanentes * 100,
+
+
         escalonar(1000, Seniores, ProjetosAceites, DatasFim, DatasInicio, DatasMeio,  [ 
                   ProjetosAEscalonar, 
                   MaximoDeProjetos, 
@@ -142,41 +107,20 @@ mimi :-
                   DuracaoProjetos, 
                   Escal_Vars 
              ]),
-append(Aceitacoes, DuracaoProjetos, VV1),
-append(VV1, Escal_Vars,VV2),      
 
- 
-        write('     to Cumulative'),nl,
-        % obtenção de soluções
-%        cumulative(ProjetosAEscalonar, [limit(MaximoDeProjetos)]), % Processamento para obtenção do escalonamento de tarefas.
-/*        write('      to aceitacoes'),nl,
-        labeling([down], Aceitacoes),
-        write('      to Duracao     '),nl,
-        labeling([up], DuracaoProjetos),
-        write('      to Escal_Vars      '),nl,
-        labeling([], Escal_Vars),      % Atribuição de valores concretos Ã s variáveis (labeling).    
-  */
-        
-      
+        append(Aceitacoes, DuracaoProjetos, VV1),
+        append(VV1, Escal_Vars,VV2),      
+
+       
         date_to_duration(ProjetosAceites, DatasInicio, Complexidade, ENC_aloc),  
-   %    write('\n\nENC para alocacoes: [ NLinhas, NSr, Dur_m, Dur_f, C]\n'),
-   %    write('ENC ':ENC_aloc),nl,nl
-
-%ENC = [[+Nlinhas,+NSeniors, +Data_It, +Data_F_proj, +Complexidade],..]
-
-%        ENC = [[10000,50,0,12,1],[8000,50,0,12,1]],
- %       Aceites = [1,1].
-
-%        alocate(GLOBAIS,ENC_aloc,Aceitacoes,Lucro,VARS),
-append(VV2,[],VVV),
-
-cumulative(ProjetosAEscalonar, [limit(MaximoDeProjetos)]),
-labeling([],VVV),
-
-
-%        write('      to alocate       '),nl,
-%        labeling([],VARS),
  
+        %alocate(GLOBAIS,ENC_aloc,Aceitacoes,Lucro,VARS),
+       
+        append(VV2,[],VVV),
+
+        cumulative(ProjetosAEscalonar, [limit(MaximoDeProjetos)]),
+        labeling([],VVV),
+
         write('Datas de entrega': DatasFim), nl,
         write('Datas de inicio': DatasInicio), nl,
         write('Datas intecalares': DatasMeio), nl,
@@ -185,19 +129,8 @@ labeling([],VVV),
 
 
 
-% consult('mimi.pl'). mimi.
-
-
-%hardcoded globals, just to test ideas
 %ENC = [[+Nlinhas,+NSeniors, +Data_It, +Data_F_proj, +Complexidade],..]
 
-% TODO allocate guys to projects
-   %TODO bug when there is less than one year of coding of a programmer, use domain?
-% TODO verificar atrasos
-% TODO Calcular a soma dos lucros
-% TODO alterar o preco das linhas de complexo  ou simples.
-
-% consult('mimi_testes.pl'). alocate( [[10000,100,0,12,1],[8000,1,0,12,1]],[1,1], Lucro, VARS ).
 alocate( Globals, ENC, Enc_aceites, Lucro, VARS ) :- 
 	nth1(19,Globals,E) ,    % capital inicial	
 	nth1(13,Globals,C),     % custo de novo contracto
@@ -233,7 +166,7 @@ alocate( Globals, ENC, Enc_aceites, Lucro, VARS ) :-
         ),
         sum(Orcamento, #=< , Cap_projectos),
 
-\
+
         (
             foreach( Orc, Orcamento),
             foreach( [Nlinhas, Nseniors, Data_it, Data_F, Complex], ENC),
@@ -277,16 +210,6 @@ alocate( Globals, ENC, Enc_aceites, Lucro, VARS ) :-
       append( FContractos, FProjectos, VARS3),
       append( OrcT, Orcamento, VARS1),
       append(VARS1,VARS3,VARS).
-/*
-      labeling([], VARS),
-
-      write('\n\n\nDADOS\n'),
-      write('Enc ':ENC),nl,
-      write('Contractos ':Contractos),nl,
-      write('Projectos ':Projectos),nl,
-      write('Orcamento ':Orcamento),nl,
-      write('OrcT ': OrcT), nl.
-*/
 
 
 
@@ -362,8 +285,7 @@ escalonar(DataTermino, SenioresDisponiveis, Projetos, DatasFim, DatasInicio, Dat
 
         
         % Restrições ao problema.
-%        maximum(Final, DatasFim), 
-        
+
         MaximoDeProjetos in 1..SenioresDisponiveis,
         sum(Aceitacoes, #>=, 1),
         count(1, Aceitacoes, #=, Aceites),
@@ -374,12 +296,6 @@ escalonar(DataTermino, SenioresDisponiveis, Projetos, DatasFim, DatasInicio, Dat
         append(Vars1, [MaximoDeProjetos], Vars),
         
                 
-        % obtenção de soluções
-%        cumulative(ProjetosAEscalonar, [limit(MaximoDeProjetos)]), % Processamento para obtenção do escalonamento de tarefas.
-        
- %       labeling([down], Aceitacoes),
-  %      labeling([up], DuracaoProjetos),
-%        labeling([], Vars),      % Atribuição de valores concretos Ã s variáveis (labeling).  
         OUT_VARS = [ 
              ProjetosAEscalonar, 
              MaximoDeProjetos, 
@@ -388,22 +304,6 @@ escalonar(DataTermino, SenioresDisponiveis, Projetos, DatasFim, DatasInicio, Dat
              Vars 
         ]. 
         
-/*        
-        % Apresentação de resultados.
-        write('Datas de inicio dos projetos ': DatasInicio),nl,
-        write('Datas de entrega intercalar dos projetos ': DatasMeio),nl,
-        write('Datas de finalização dos projetos ': DatasFim),nl,
-        write('Duração dos projetos': DuracaoProjetos),nl,
-        write('Aceitações': Aceitacoes), nl,
-        write('Linhas de código dos projetos': LinhasDeCodigo), nl,
-        write('Utilização máximo de Séniores': SenioresAtribuidos),nl,
-        write('Máximo de projetos simultâneos ': MaximoDeProjetos),nl,
-        write('Recursos utilizados': SenioresAtribuidos), nl,
-        write('Projetos escalonados': ProjetosAEscalonar), nl,
-        write('Projetos aceites': Aceites), nl,
-        write('Inicio': Inicio), nl,
-        fd_statistics.
-*/
 
 
 
